@@ -36,10 +36,6 @@ const theme = createTheme({
   },
 });
 
-/**
- * Main App component - Live Weather Dashboard
- * Manages city selection and weather data fetching using React hooks
- */
 function App() {
   // State management using useState hook
   const [selectedCity, setSelectedCity] = useState(""); // Currently selected city
@@ -47,48 +43,37 @@ function App() {
   const [loading, setLoading] = useState(false); // Loading state for API calls
   const [error, setError] = useState(null); // Error state for failed API calls
 
-  /**
-   * useEffect hook to fetch weather data when selected city changes
-   * This demonstrates handling side effects in React
-   */
   useEffect(() => {
     const fetchWeather = async () => {
-      // Only fetch if a city is selected
       if (!selectedCity) {
         setWeatherData(null);
         return;
       }
 
-      setLoading(true); // Show loading spinner
-      setError(null); // Clear any previous errors
+      setLoading(true);
+      setError(null);
 
       try {
-        // Find the selected city object from our predefined cities
         const cityObj = cities.find((city) => city.name === selectedCity);
 
         if (!cityObj) {
           throw new Error("City not found");
         }
 
-        // Fetch weather data using our API utility function
         const data = await fetchWeatherData(cityObj);
-        setWeatherData(data); // Update state with fetched data
+        setWeatherData(data);
       } catch (err) {
         console.error("Failed to fetch weather data:", err);
         setError("Failed to fetch weather data. Please try again.");
         setWeatherData(null);
       } finally {
-        setLoading(false); // Hide loading spinner
+        setLoading(false);
       }
     };
 
     fetchWeather();
-  }, [selectedCity]); // Dependency array - effect runs when selectedCity changes
+  }, [selectedCity]);
 
-  /**
-   * Handles city selection from dropdown
-   * @param {Object} event - Select change event
-   */
   const handleCityChange = (event) => {
     setSelectedCity(event.target.value);
   };
@@ -97,7 +82,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth="md" sx={{ paddingTop: 4, paddingBottom: 4 }}>
-        <Grid container spacing={3}>
+        <Grid spacing={3}>
           {/* Header Section */}
           <Grid item xs={12}>
             <Box textAlign="center" marginBottom={2}>
@@ -113,7 +98,7 @@ function App() {
                   marginBottom: 1,
                 }}
               >
-                🌤️ Live Weather Dashboard
+                Live Weather Dashboard
               </Typography>
               <Typography variant="h6" color="text.secondary">
                 Get real-time weather updates for cities around the world
@@ -122,7 +107,7 @@ function App() {
           </Grid>
 
           {/* City Selection Dropdown */}
-          <Grid item xs={12}>
+          <Grid xs={12} sx={{ marginTop: 5 }}>
             <Box
               width="100%"
               marginBottom={3}
@@ -138,7 +123,6 @@ function App() {
                   label="Select City"
                   onChange={handleCityChange}
                 >
-                  {/* Render dropdown options from predefined cities */}
                   {cities.map((city) => (
                     <MenuItem key={city.name} value={city.name}>
                       {city.name}
@@ -152,7 +136,6 @@ function App() {
           {/* Content Section */}
           <Grid item xs={12}>
             <Box display="block" width="100%">
-              {/* Show loading spinner while fetching data */}
               {loading && (
                 <Box textAlign="center" padding={4}>
                   <CircularProgress size={60} />
@@ -162,19 +145,16 @@ function App() {
                 </Box>
               )}
 
-              {/* Show error message if API call fails */}
               {error && (
                 <Alert severity="error" sx={{ maxWidth: 400 }}>
                   {error}
                 </Alert>
               )}
 
-              {/* Show weather card when data is successfully loaded */}
               {weatherData && !loading && !error && (
                 <WeatherCard weatherData={weatherData} />
               )}
 
-              {/* Show instruction message when no city is selected */}
               {!selectedCity && !loading && !error && (
                 <Box textAlign="center" padding={4}>
                   <Typography variant="h6" color="text.secondary">
